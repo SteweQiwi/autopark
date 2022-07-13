@@ -36,6 +36,7 @@ class Vehicle(models.Model):
     car_model = models.CharField(max_length=50)
     repair_status = models.IntegerField(choices=REPAIR_STATUS)
     fuel_type = models.IntegerField(choices=FUEL_TYPE)
+    mileage = models.PositiveIntegerField(default=1)
     number_plate = models.CharField(max_length=8)
     fuel_consumption = models.PositiveIntegerField()
     length = models.DecimalField(
@@ -57,9 +58,9 @@ class Vehicle(models.Model):
 
 
 class Driver(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     license = models.CharField(max_length=5)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.name}'
@@ -76,6 +77,7 @@ class Order(TimeStampedModel):
         (ON_THE_WAY, 'On the way'),
         (DELIVERED, 'Delivered'),
     )
+    manager = models.ForeignKey('Manager', on_delete=models.CASCADE)
     details = models.CharField(max_length=200)
     deadline = models.DateTimeField()
     status = models.IntegerField(choices=STATUS)
@@ -101,7 +103,7 @@ class Order(TimeStampedModel):
         return f'{self.details} {self.driver}  {self.vehicle} {self.get_status_display()}'
 
 
-class Refill(models.Model):
+class Refill(TimeStampedModel):
     GAS = 1
     OILER = 2
     PETROL = 3
@@ -111,7 +113,7 @@ class Refill(models.Model):
         (PETROL, 'Petrol'),
     )
     type = models.IntegerField(choices=FUEL_TYPE)
-    price = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     car = models.ForeignKey('Vehicle', on_delete=models.CASCADE)
     driver = models.ForeignKey('Driver', on_delete=models.CASCADE)
     amount = models.PositiveIntegerField()
@@ -139,4 +141,3 @@ class Manager(models.Model):
 
     def __str__(self):
         return f'{self.user}'
-    

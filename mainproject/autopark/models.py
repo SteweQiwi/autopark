@@ -2,6 +2,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from decimal import Decimal
 from django.contrib.auth.models import User
+from django.db.models import F
 from django_extensions.db.models import TimeStampedModel
 
 
@@ -101,6 +102,17 @@ class Order(TimeStampedModel):
 
     def __str__(self):
         return f'{self.details} {self.driver}  {self.vehicle} {self.get_status_display()}'
+
+    # def save(self, *args, **kwargs):
+    #     self.vehicle.mileage = self.vehicle.mileage + self.road_distance
+    #     super().save(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        Vehicle.objects.filter(
+            car_model=self.vehicle.car_model,
+            mileage=self.vehicle.mileage
+        ).update(mileage=self.road_distance+self.vehicle.mileage)
+        super(Order, self).save(*args, **kwargs)
 
 
 class Refill(TimeStampedModel):

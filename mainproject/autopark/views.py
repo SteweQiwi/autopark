@@ -12,13 +12,19 @@ class VehicleAPIView(generics.ListAPIView):
 
 
 class FutureOrderAPIView(generics.ListAPIView):
-    queryset = Order.objects.filter(driver__id=1, deadline__gt=timezone.now())
     serializer_class = FutureOrderSerializer
+
+    def get_queryset(self):
+        driver_id = self.kwargs['driver_id']
+        return Order.objects.filter(driver_id=driver_id, deadline__gt=timezone.now())
 
 
 class LastMonthRefillInfoAPIView(generics.ListAPIView):
-    queryset = Refill.objects.filter(created__gt=timezone.now() - timezone.timedelta(days=30), driver__id=1)
     serializer_class = LastMonthRefillInfoSerializer
+
+    def get_queryset(self):
+        driver_id = self.kwargs['driver_id']
+        return Refill.objects.filter(created__gt=timezone.now() - timezone.timedelta(days=30), driver_id=driver_id)
 
 
 class DriversVehicleOnRepairAPIView(generics.ListAPIView):
@@ -27,19 +33,28 @@ class DriversVehicleOnRepairAPIView(generics.ListAPIView):
 
 
 class DriversWhoRideOnVehicleAPIView(generics.ListAPIView):
-    queryset = Driver.objects.filter(order__vehicle=7).distinct()
     serializer_class = DriverSerializer
 
+    def get_queryset(self):
+        order__vehicle = self.kwargs['order__vehicle']
+        return Driver.objects.filter(order__vehicle=order__vehicle).distinct()
 
-class ManagersDriverAPIView(generics.ListAPIView):
-    queryset = Manager.objects.filter(order__driver=1).distinct()
+
+class ManagerByDriverAPIView(generics.ListAPIView):
     serializer_class = ManagerSerializer
 
+    def get_queryset(self):
+        order__driver = self.kwargs["order__driver"]
+        return Manager.objects.filter(order__driver=order__driver).distinct()
 
-class DriversManagerByMileageAPIView(generics.ListAPIView):
-    queryset = Driver.objects.filter(order__manager__id=2)\
-        .annotate(sum=Sum('order__road_distance')).distinct().order_by('-sum')
+
+class DriverByManagerSortMileageAPIView(generics.ListAPIView):
     serializer_class = DriverSerializer
+
+    def get_queryset(self):
+        order__manager = self.kwargs['order__manager']
+        return Driver.objects.filter(order__manager=order__manager)\
+            .annotate(sum=Sum('order__road_distance')).distinct().order_by('-sum')
 
 
 class VehicleBySpecialParametersAPIView(generics.ListAPIView):

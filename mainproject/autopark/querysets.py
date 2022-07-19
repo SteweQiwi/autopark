@@ -1,9 +1,9 @@
 from django.db.models import Count, Q, F
 from django.utils import timezone
-from mainproject.autopark.models import *
-
+from autopark.models import *
 
 # QuerySet 1
+
 
 q1 = Order.objects.filter(driver__id=1, deadline__gt=timezone.now())
 

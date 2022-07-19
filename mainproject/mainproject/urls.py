@@ -16,10 +16,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from autopark.views import VehicleAPIView
+from autopark.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/v1/vehiclelist/', VehicleAPIView.as_view())
+    path('api/v1/vehicle-list/', VehicleAPIView.as_view()),
+    path('api/v1/future-order/', FutureOrderAPIView.as_view()),
+    path('api/v1/last-month-refill-info/', LastMonthRefillInfoAPIView.as_view()),
+    path('api/v1/drivers-vehicle-on-repair/', DriversVehicleOnRepairAPIView.as_view()),
+    path('api/v1/drivers-who-ride-on-vehicle/', DriversWhoRideOnVehicleAPIView.as_view()),
+    path('api/v1/managers-driver/', ManagersDriverAPIView.as_view()),
+    path('api/v1/drivers-manager-by-mileage/', DriversManagerByMileageAPIView.as_view()),
+    path('api/v1/vehicle-by-special-parameters/', VehicleBySpecialParametersAPIView.as_view()),
 ]

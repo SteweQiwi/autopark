@@ -1,9 +1,8 @@
-from django.db.models import Count, Q, F
+from django.db.models import Count, Q, F, Sum
 from django.utils import timezone
 from autopark.models import *
 
 # QuerySet 1
-
 
 q1 = Order.objects.filter(driver__id=1, deadline__gt=timezone.now())
 
@@ -20,17 +19,18 @@ q3 = Driver.objects.filter(vehicle__repair_status=2).distinct()
 
 # QuerySet 4
 
-q4 = Driver.objects.filter(order__vehicle=7)
+q4 = Driver.objects.filter(order__vehicle=7).distinct()
 
 
 # QuerySet 5
 
-q5 = Manager.objects.filter(order__driver=1)
+q5 = Manager.objects.filter(order__driver=1).distinct()
 
 
 # QuerySet 6
 
-q6 = Driver.objects.filter(order__manager=1).order_by("order__vehicle__mileage")
+q6 = Driver.objects.filter(order__manager__id=2)\
+        .annotate(sum=Sum('order__road_distance')).distinct().order_by('-sum')
 
 
 # QuerySet 7

@@ -15,17 +15,42 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
 
 from autopark.views import *
+
+router = routers.DefaultRouter()
+router.register('vehicle', VehicleViewSet)
+router.register(r'future-order/(?P<driver_id>[^/.]+)', FutureOrderViewSet, basename='FutureOrder')
+router.register(
+    r'last-month-refill-info/(?P<driver_id>[^/.]+)',
+    LastMonthRefillInfoViewSet, basename='LastMonthRefillInfo'
+)
+router.register(r'drivers-vehicle-on-repair', DriversVehicleOnRepairViewSet)
+router.register(
+    r'drivers-who-ride-on-vehicle/(?P<vehicle_id>[^/.]+)',
+    DriversWhoRideOnVehicleViewSet, basename='DriverWhoRideOnVehicle'
+)
+router.register(
+    r'manager-by-driver/(?P<driver_id>[^/.]+)',
+    ManagerByDriverViewSet, basename='ManagerByDriver'
+)
+router.register(
+    r'driver-by-manager/(?P<manager_id>[^/.]+)',
+    DriverByManagerSortMileageViewSet, basename='DriverByManagerSortMileage'
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/v1/vehicle-list/', VehicleAPIView.as_view()),
+    path('api/v1/', include(router.urls)),
+    # path('api/v1/vehicle-list/', VehicleViewSet.as_view({'get': 'list'})),
+    # path('api/v1/vehicle-list/<int:pk>', VehicleViewSet.as_view({'put': 'update'})),
     path('api/v1/future-order/<int:driver_id>/', FutureOrderAPIView.as_view()),
     path('api/v1/last-month-refill-info/<int:driver_id>/', LastMonthRefillInfoAPIView.as_view()),
     path('api/v1/drivers-vehicle-on-repair/', DriversVehicleOnRepairAPIView.as_view()),
-    path('api/v1/drivers-who-ride-on-vehicle/<int:order__vehicle>/', DriversWhoRideOnVehicleAPIView.as_view()),
+    path('api/v1/drivers-who-ride-on-vehicle/<int:vehicle_id>/', DriversWhoRideOnVehicleAPIView.as_view()),
     path('api/v1/managers-driver/<int:order__driver>', ManagerByDriverAPIView.as_view()),
     path('api/v1/drivers-manager-sortby-mileage/<int:order__manager>/', DriverByManagerSortMileageAPIView.as_view()),
     path('api/v1/vehicle-by-special-parameters/', VehicleBySpecialParametersAPIView.as_view()),

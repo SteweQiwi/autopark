@@ -103,10 +103,6 @@ class Order(TimeStampedModel):
     def __str__(self):
         return f'{self.details} {self.driver}  {self.vehicle} {self.get_status_display()}'
 
-    # def save(self, *args, **kwargs):
-    #     self.vehicle.mileage = self.vehicle.mileage + self.road_distance
-    #     super().save(*args, **kwargs)
-
     def save(self, *args, **kwargs):
         Vehicle.objects.filter(
             car_model=self.vehicle.car_model,

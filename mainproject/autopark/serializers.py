@@ -7,33 +7,70 @@ class VehicleSerializer(serializers.ModelSerializer):
         model = Vehicle
         fields = [
             'driver', 'car_model', 'type', 'repair_status', 'fuel_type', 'mileage',
-            'number_plate', 'fuel_consumption', 'load_capacity', 'height', 'width', 'length'
+            'number_plate', 'fuel_consumption', 'load_capacity', 'height', 'width', 'length', 'id'
         ]
+        read_only_fields = ['id']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = [
+            'manager', 'driver', 'client_name', 'vehicle', 'details', 'deadline', 'status', 'road_distance', 'length', 'width',
+            'height', 'weight', 'id'
+        ]
+        read_only_fields = ['id']
 
 
 class DriverSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Driver
-        fields = '__all__'
+        fields = ['name', 'user', 'license']
 
 
 class ManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manager
-        fields = '__all__'
+        fields = ['user']
 
 
-class FutureOrderSerializer(serializers.ModelSerializer):
+class RepairSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Repair
+        fields = ['breakdown', 'cost', 'vehicle', 'deadline']
+
+
+class UpdateOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = [
+            'manager', 'client_name', 'vehicle', 'details', 'deadline', 'status', 'road_distance', 'length', 'width',
+            'height', 'weight', 'driver', 'id'
+        ]
+        read_only_fields = [
+            'manager', 'client_name', 'vehicle', 'details', 'deadline', 'road_distance', 'length', 'width',
+            'height', 'weight', 'driver', 'id'
+        ]
+
+
+class RefillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Refill
+        fields = [
+            'type', 'price', 'amount', 'car', 'driver'
+        ]
 
 
 class LastMonthRefillInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Refill
         fields = [
-            'type', 'amount', 'price'
+            'type', 'amount', 'price', 'id'
         ]
+        read_only_fields = ['id']
+
+
 
 
